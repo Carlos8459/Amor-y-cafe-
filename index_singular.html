@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Amor y Café - Waslala | Menú Digital</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..700;1,400..700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #FDFBF7;
+      color: #2F1F17;
+    }
+    .font-serif {
+      font-family: 'Playfair Display', Georgia, serif;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #fdfbf7;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #e2d9d0;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #c3b5a7;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+    .animate-float {
+      animation: float 6s ease-in-out infinite;
+    }
+    .neon-text-glow {
+      text-shadow: 0 0 10px rgba(251, 113, 133, 0.2), 0 0 20px rgba(251, 113, 133, 0.1);
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <!-- NOTIFICATION TOAST -->
+  <div id="toast" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-[#2F1F17] text-[#FDFBF7] px-6 py-3 rounded-full text-sm font-medium shadow-xl opacity-0 translate-y-[-20px] transition-all duration-300 pointer-events-none flex items-center space-x-2">
+    <span id="toast-text">¡Se añadió el platillo!</span>
+  </div>
+
+  <!-- HEADER & NAVIGATION -->
+  <header class="sticky top-0 bg-[#FDFBF7]/90 backdrop-blur-md border-b border-[#F5EFE6] z-40 transition-shadow">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <div class="p-1.5 rounded-full bg-rose-50 text-rose-500">
+          <i data-lucide="heart" class="w-5 h-5 fill-rose-400"></i>
+        </div>
+        <div class="leading-none">
+          <span class="font-serif text-xl font-bold tracking-tight text-[#2F1F17]">Amor & Café</span>
+          <span class="block text-[10px] font-mono tracking-wider uppercase text-rose-400">Waslala</span>
+        </div>
+      </div>
+
+      <div class="hidden md:flex items-center space-x-6 text-sm font-medium text-[#4B3621]">
+        <a href="#hero" class="hover:text-rose-500 transition-colors">Inicio</a>
+        <a href="#menu-grid" class="hover:text-rose-500 transition-colors">Menú</a>
+        <div class="flex items-center space-x-1 text-slate-500 text-xs">
+          <i data-lucide="map-pin" class="w-3.5 h-3.5 text-rose-400"></i>
+          <span>Waslala, Región Central</span>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-2">
+        <button onclick="toggleCart()" class="relative p-2.5 bg-[#2F1F17] text-[#FDFBF7] rounded-full hover:bg-amber-900 transition-all flex items-center shadow-md">
+          <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+          <span id="cart-badge" class="absolute -top-1.5 -right-1.5 bg-rose-505 bg-rose-500 text-white font-mono text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold tracking-tight border-2 border-[#FDFBF7] hidden">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section id="hero" class="relative overflow-hidden bg-gradient-to-b from-[#F9F6F0] via-[#FDFBF7] to-[#FDFBF7] py-16 md:py-24 px-4">
+    <!-- Ambient glowing backgrounds in colors -->
+    <div class="absolute top-10 right-[-10%] w-[350px] h-[350px] rounded-full bg-rose-100/30 blur-[80px] pointer-events-none"></div>
+    <div class="absolute bottom-10 left-[-10%] w-[400px] h-[400px] rounded-full bg-purple-100/30 blur-[100px] pointer-events-none"></div>
+
+    <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center relative z-10">
+      <div class="space-y-6 text-center md:text-left">
+        <div class="inline-flex items-center space-x-2 bg-rose-50 border border-rose-100 text-rose-600 px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+          <span>El rincón más acogedor de Waslala</span>
+        </div>
+        <h1 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-[#2F1F17] leading-tight tracking-tight">
+          Sabor que <span class="text-rose-400 neon-text-glow">enamora</span>,<br>
+          café que <span class="border-b-4 border-amber-800/20 italic">inspira</span>
+        </h1>
+        <p class="text-base sm:text-lg text-[#5A493B] max-w-lg leading-relaxed font-light mx-auto md:mx-0">
+          En un ambiente adornado con hermosas flores sutiles y luces de neón cálidas, creamos platillos memorables y cafés selectos pensados para acariciar tu alma.
+        </p>
+
+        <div class="pt-4 flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4">
+          <button onclick="scrollToMenu()" class="w-full sm:w-auto px-8 py-4 bg-[#2F1F17] hover:bg-amber-900 text-[#FDFBF7] rounded-full font-bold shadow-lg shadow-amber-950/10 transition-all flex items-center justify-center space-x-2 group">
+            <span>Explore nuestro menú</span>
+            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1.5 transition-transform"></i>
+          </button>
+          
+          <div class="flex items-center space-x-4 text-xs text-[#5A493B]">
+            <div class="flex items-center space-x-1">
+              <i data-lucide="clock" class="w-4 h-4 text-rose-400"></i>
+              <span>7:00 AM - 9:00 PM</span>
+            </div>
+            <div class="w-1.5 h-1.5 rounded-full bg-[#E2D9D0]"></div>
+            <div class="flex items-center space-x-1">
+              <i data-lucide="phone" class="w-4 h-4 text-rose-400"></i>
+              <span>+505 8459-3326</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero Gallery visual representation -->
+      <div class="relative flex justify-center animate-float">
+        <div class="relative w-full max-w-md aspect-square rounded-[2rem] overflow-hidden shadow-2xl border-4 border-white">
+          <img src="https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=800&q=80" alt="Amor y Cafe Waslala" class="w-full h-full object-cover">
+          <div class="absolute inset-0 bg-gradient-to-t from-[#2F1F17]/80 via-transparent to-transparent flex flex-col justify-end p-8 text-white">
+            <span class="text-rose-300 text-xs font-bold tracking-widest uppercase mb-1">Cafetería & Restaurante</span>
+            <h2 class="font-serif text-2xl font-bold">Un oasis hogareño</h2>
+            <p class="text-xs text-[#F2EFE9] font-light">Waslala, Nicaragua</p>
+          </div>
+        </div>
+        
+        <!-- Small floating detail cards -->
+        <div class="absolute -bottom-4 -left-4 bg-[#FDFBF7] p-4 rounded-2xl shadow-xl flex items-center space-x-3 border border-[#F5EFE6]">
+          <div class="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center text-amber-800">
+            <i data-lucide="percent" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <span class="block text-xs font-bold text-[#2F1F17]">Café Premium</span>
+            <span class="block text-[10px] text-[#5A493B]">Granos Waslala 100% Arábicos</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INTERACTIVE SEARCH & CATEGORIES BAR -->
+  <section id="menu-grid" class="max-w-7xl mx-auto px-4 py-12">
+    <!-- Section Title -->
+    <div class="text-center max-w-xl mx-auto mb-10">
+      <span class="text-rose-500 font-semibold tracking-wider text-xs uppercase block mb-1">Delicias Waslaleñas</span>
+      <h2 class="font-serif text-3xl sm:text-4xl font-bold text-[#2F1F17]">Nuestro Menú Amor y Café</h2>
+      <p class="text-sm text-[#5A493B] mt-2">Selecciona tus comidas y bebidas favoritas. Tu carrito calculará el total y enviará tu pedido directo a nuestro WhatsApp.</p>
+    </div>
+
+    <!-- Search input & Filters -->
+    <div class="bg-white rounded-3xl p-6 shadow-md border border-[#F5EFE6] space-y-6 mb-8">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 items-center">
+        <!-- Main categories buttons -->
+        <div class="flex bg-[#F5EFE6]/55 p-1 rounded-2xl col-span-1">
+          <button onclick="switchCategory('comidas')" id="btn-cat-comidas" class="flex-1 py-3 text-center rounded-xl text-sm font-bold transition-all bg-[#2F1F17] text-[#FDFBF7]">
+            <span class="flex items-center justify-center gap-1.5">
+              🍱 Platillos & Comidas
+            </span>
+          </button>
+          <button onclick="switchCategory('bebidas')" id="btn-cat-bebidas" class="flex-1 py-3 text-center rounded-xl text-sm font-bold transition-all text-[#4B3621] hover:text-[#2F1F17]">
+            <span class="flex items-center justify-center gap-1.5">
+              ☕ Bebidas & Elixires
+            </span>
+          </button>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="relative col-span-1 lg:col-span-2">
+          <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+            <i data-lucide="search" class="w-4 h-4"></i>
+          </span>
+          <input type="text" id="search-input" oninput="filterMenuItems()" placeholder="Buscar platillo, sabor o ingrediente..." class="w-full bg-[#FAF8F5] border border-[#EBE3D5] rounded-2xl py-3 pl-11 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-rose-400 focus:bg-white transition-all text-[#2F1F17]">
+        </div>
+      </div>
+
+      <!-- Subcategory Tabs -->
+      <div class="border-t border-[#F5EFE6] pt-4">
+        <span class="block text-xs font-semibold text-[#5A493B] mb-3">Subcategorías:</span>
+        <div id="subcategories-container" class="flex flex-wrap gap-2">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- MENU GRID -->
+    <div id="menu-items-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Populated dynamically via JS -->
+    </div>
+
+    <!-- EMPTY STATE -->
+    <div id="empty-state" class="hidden text-center py-16">
+      <i data-lucide="info" class="w-12 h-12 text-stone-300 mx-auto mb-3"></i>
+      <p class="text-stone-500 font-medium">No se encontraron productos que coincidan con la búsqueda.</p>
+    </div>
+  </section>
+
+  <!-- CART SIDE DRAWER -->
+  <div id="cart-drawer" class="fixed inset-0 z-50 overflow-hidden pointer-events-none hidden" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
+    <div class="absolute inset-0 overflow-hidden">
+      <!-- Overlay background -->
+      <div id="cart-backdrop" onclick="toggleCart()" class="absolute inset-0 bg-stone-900/45 backdrop-blur-xs transition-opacity duration-300 opacity-0 pointer-events-auto"></div>
+
+      <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+        <div id="cart-panel" class="pointer-events-auto w-screen max-w-md transform translate-x-full transition-transform duration-300 flex flex-col bg-[#FDFBF7] shadow-2xl h-screen border-l border-[#F5EFE6]">
+          <!-- Title / Header -->
+          <div class="px-5 py-6 bg-[#2F1F17] text-[#FDFBF7] flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <i data-lucide="shopping-bag" class="w-5 h-5 text-rose-300"></i>
+              <h2 class="font-serif text-lg font-bold">Resumen de Tu Pedido</h2>
+            </div>
+            <button onclick="toggleCart()" class="p-1 rounded-full hover:bg-white/10 transition-colors">
+              <i data-lucide="x" class="w-5 h-5 text-white"></i>
+            </button>
+          </div>
+
+          <!-- Items Container -->
+          <div class="flex-1 overflow-y-auto px-4 py-4 space-y-4" id="cart-items-container">
+            <!-- Populated dynamically -->
+          </div>
+
+          <!-- Checkout Configuration Form -->
+          <div class="p-4 border-t border-[#F5EFE6] bg-[#FAF8F5] space-y-3">
+            <div>
+              <label class="block text-xs font-bold text-[#4B3621] mb-1">👤 Nombre del Cliente:</label>
+              <input type="text" id="cust-name" placeholder="Ej: Carlos Gutiérrez" class="w-full bg-white border border-[#EBE3D5] rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-rose-400">
+            </div>
+            
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-bold text-[#4B3621] mb-1">🛵 Servicio:</label>
+                <select id="del-type" onchange="toggleTableInput()" class="w-full bg-white border border-[#EBE3D5] rounded-xl px-2 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-rose-400">
+                  <option value="local">Consumo en Local</option>
+                  <option value="llevar">Para Llevar</option>
+                </select>
+              </div>
+              <div id="table-number-group">
+                <label class="block text-xs font-bold text-[#4B3621] mb-1">🪑 Número de Mesa:</label>
+                <input type="text" id="table-num" placeholder="Mesa A-1" class="w-full bg-white border border-[#EBE3D5] rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-rose-400">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-[#4B3621] mb-1">📝 Observaciones Especiales:</label>
+              <input type="text" id="ord-notes" placeholder="Ej: Sin azúcar, carne bien cocida, etc." class="w-full bg-white border border-[#EBE3D5] rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-rose-400">
+            </div>
+          </div>
+
+          <!-- Summary Summary & WhatsApp Checkout -->
+          <div class="p-5 border-t border-[#F5EFE6] bg-white space-y-4">
+            <div class="flex items-center justify-between font-bold text-[#2F1F17] text-lg">
+              <span>Total Estimado:</span>
+              <span id="cart-total-price" class="text-rose-500 font-mono">C$ 0</span>
+            </div>
+
+            <button onclick="sendOrder()" class="w-full py-4 px-6 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-bold flex items-center justify-center space-x-2 shadow-lg shadow-emerald-700/10 transition-all">
+              <span class="flex items-center gap-2">
+                <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                  <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.25 8.477 3.517 2.266 2.268 3.511 5.281 3.51 8.487-.005 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.503-5.714-1.46L0 24zm6.59-4.846c1.6.95 3.1 1.45 4.8 1.45 5.518 0 10.011-4.493 10.016-10.01.004-2.674-1.037-5.188-2.932-7.085C16.634 1.61 14.127.57 11.45.57 5.932.57 1.44 5.062 1.435 10.58c-.001 1.83.483 3.61 1.398 5.17l-.21 1.307c-.43.6-.9 1.55-.9 1.55 1.15.35 1.6.45 1.6.45s.75-.4 1.76-1.07l.564-.323zM16.92 14.2c-.27-.13-1.6-.79-1.85-.88-.25-.09-.43-.13-.61.13-.18.27-.69.88-.85 1.07-.16.18-.32.21-.59.08s-1.13-.42-2.15-1.33c-.79-.7-1.33-1.58-1.48-1.85-.16-.27-.02-.42.12-.55.12-.12.27-.32.4-.48.13-.16.18-.27.27-.45.09-.18.05-.34-.02-.48-.07-.13-.61-1.47-.83-2-.22-.53-.44-.46-.61-.47-.16-.01-.34-.01-.52-.01-.18 0-.48.07-.73.34-.25.27-.96.94-.96 2.3s.98 2.67 1.12 2.85c.14.18 1.93 2.95 4.67 4.13.65.28 1.16.45 1.56.57.65.2 1.25.17 1.72.1.53-.08 1.6-.66 1.83-1.27.23-.61.23-1.12.16-1.27-.07-.15-.25-.24-.52-.37z"/>
+                </svg>
+                Confirmar por WhatsApp
+              </span>
+            </button>
+            <p class="text-[10px] text-zinc-500 text-center">Tu pedido se compilará automáticamente en un mensaje para facilitar el cobro y la preparación inmediata.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLOATING ACTION GROUP (CART BUTTON & INFO) -->
+  <div class="fixed bottom-6 right-6 flex flex-col space-y-3 z-45 pointer-events-none">
+    <button onclick="toggleCart()" class="pointer-events-auto bg-rose-500 hover:bg-rose-600 text-white p-4.5 rounded-full shadow-2xl flex items-center justify-center transition-all scale-100 active:scale-95 duration-200 uppercase tracking-widest font-bold group relative">
+      <i data-lucide="shopping-bag" class="w-6 h-6"></i>
+      <span id="float-badge" class="absolute -top-1 -right-1 bg-[#2F1F17] text-[#FDFBF7] text-xs w-6 h-6 rounded-full flex items-center justify-center font-bold font-mono tracking-tighter border-2 border-[#FDFBF7]">0</span>
+    </button>
+  </div>
+
+  <!-- AMBIENT FOOTER -->
+  <footer class="bg-[#2F1F17] text-[#FAF8F5]/80 py-12 px-4 mt-16 border-t border-[#4B3621]">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10">
+      <div class="space-y-4">
+        <div class="flex items-center space-x-2 text-white">
+          <i data-lucide="heart" class="w-5 h-5 text-rose-400 fill-rose-400"></i>
+          <span class="font-serif text-2xl font-bold">Amor y Café</span>
+        </div>
+        <p class="text-xs text-zinc-400 leading-relaxed font-light">
+          Disfruta la maravillosa experiencia del café artesanal Waslaleño y una propuesta gastronómica hecha con amor en el corazón de nuestra hermosa localidad de Waslala.
+        </p>
+      </div>
+
+      <div class="space-y-3">
+        <h4 class="font-serif text-white font-bold text-lg">Horario de Atención</h4>
+        <ul class="text-xs text-zinc-400 space-y-1 font-mono">
+          <li>Lunes a Viernes: 7:30 AM - 8:30 PM</li>
+          <li>Sábados y Domingos: 7:00 AM - 9:00 PM</li>
+        </ul>
+        <p class="text-[11px] text-rose-300">¡Hacemos envíos o reservamos tu mesa!</p>
+      </div>
+
+      <div class="space-y-3">
+        <h4 class="font-serif text-white font-bold text-lg">📍 Ubicación Waslala</h4>
+        <p class="text-xs text-zinc-400">
+          Ubicado en el centro de Waslala, Nicaragua. Contiguo a la plaza principal, un ambiente florido con letreros neón ideal para tus mejores recuerdos.
+        </p>
+      </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto mt-12 pt-6 border-t border-zinc-800 flex flex-col sm:flex-row items-center justify-between text-[11px] text-zinc-500">
+      <p>© 2026 Restaurante Amor y Café - Waslala. Todos los derechos reservados.</p>
+      <p class="mt-2 sm:mt-0">Diseñado con amor y delicadeza 🌸</p>
+    </div>
+  </footer>
+
+  <!-- DATABASE IN THE GLOBAL CONTEXT -->
+  <script>
+    const MENU_ITEMS = [
+  {
+    "id": "tostones-queso",
+    "name": "Tostones con queso",
+    "price": 130,
+    "category": "comidas",
+    "subcategory": "antojitos",
+    "description": "Crujientes tostones de plátano verde con generoso queso frito waslaleño.",
+    "image": "https://images.unsplash.com/photo-1541518763669-27fef04b14ea?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "salchipapas",
+    "name": "Salchipapas de la casa",
+    "price": 180,
+    "category": "comidas",
+    "subcategory": "antojitos",
+    "description": "Papas fritas doraditas con salchichas seleccionadas, acompañadas de aderezos caseros.",
+    "image": "https://images.unsplash.com/photo-1576107232684-1279f390859f?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "quesadillas-pollo",
+    "name": "Quesadillas de pollo",
+    "price": 220,
+    "category": "comidas",
+    "subcategory": "antojitos",
+    "description": "Tortilla de harina rellena de pollo desmenuzado sazonado y abundante queso fundido.",
+    "image": "https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "hamburguesa-res",
+    "name": "Hamburguesa de res con papas",
+    "price": 280,
+    "category": "comidas",
+    "subcategory": "antojitos",
+    "description": "Jugosa carne de res de primera calidad, queso cheddar derretido, vegetales frescos y papas fritas.",
+    "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "filete-res",
+    "name": "Filete de res a la plancha",
+    "price": 380,
+    "category": "comidas",
+    "subcategory": "platos_fuertes",
+    "description": "Exquisito corte de lomo de res cocinado a la plancha al término de su elección, servido con guarniciones.",
+    "image": "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "filete-cerdo",
+    "name": "Filete de cerdo a la plancha",
+    "price": 360,
+    "category": "comidas",
+    "subcategory": "platos_fuertes",
+    "description": "Filete de cerdo sumamente jugoso, marinado con finas hierbas y asado a la plancha.",
+    "image": "https://images.unsplash.com/photo-1602410214349-43a512d7c0bc?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "filete-pollo",
+    "name": "Filete de pollo a la plancha",
+    "price": 350,
+    "category": "comidas",
+    "subcategory": "platos_fuertes",
+    "description": "Pechuga de pollo fileteada, sazonada con especias aromáticas y sellada a la plancha.",
+    "image": "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "fajitas-mixtas",
+    "name": "Fajitas mixtas",
+    "price": 320,
+    "category": "comidas",
+    "subcategory": "platos_fuertes",
+    "description": "Tiras saltadas de res, pollo y cerdo con pimientos, cebollas y especias de la casa.",
+    "image": "https://images.unsplash.com/photo-1534939561126-855b8675edd7?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "deditos-pollo-completo",
+    "name": "Deditos de pollo completo",
+    "price": 310,
+    "category": "comidas",
+    "subcategory": "platos_fuertes",
+    "description": "Crujientes deditos de pechuga de pollo empanizados, servidos con papas, ensalada y salsa especial.",
+    "image": "https://images.unsplash.com/photo-1562967914-608f82629710?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "deditos-pollo-sencillo",
+    "name": "Deditos de pollo sencillo",
+    "price": 280,
+    "category": "comidas",
+    "subcategory": "platos_fuertes",
+    "description": "Deditos de pollo empanizados crujientes con sus aderezos favoritos.",
+    "image": "https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "alitas-papas",
+    "name": "Alitas con papas + salsas",
+    "price": 300,
+    "category": "comidas",
+    "subcategory": "platos_fuertes",
+    "description": "Alitas de pollo perfectamente sazonadas, fritas al punto exacto, guarnecidas con papas francesas.",
+    "image": "https://images.unsplash.com/photo-1567620832903-9fc6debc209f?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "rib-eye",
+    "name": "Rib Eye Premium",
+    "price": 680,
+    "category": "comidas",
+    "subcategory": "cortes_premium",
+    "description": "Corte marmoleado de extraordinaria jugosidad y suavidad extrema, asado a la perfección con mantequilla de ajo.",
+    "image": "https://images.unsplash.com/photo-1546964124-0cce460f38ef?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "new-york",
+    "name": "New York Strip",
+    "price": 660,
+    "category": "comidas",
+    "subcategory": "cortes_premium",
+    "description": "Corte de carne tierno y con gran sabor característico, sellado a fuego alto con romero fresco.",
+    "image": "https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "extra-tostones",
+    "name": "Extras tostones",
+    "price": 40,
+    "category": "comidas",
+    "subcategory": "extras",
+    "description": "Porción adicional de crujientes tostones hechos al momento.",
+    "image": "https://images.unsplash.com/photo-1541518763669-27fef04b14ea?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "extra-arroz",
+    "name": "Porción de arroz",
+    "price": 30,
+    "category": "comidas",
+    "subcategory": "extras",
+    "description": "Arroz blanco clásico, suelto y perfectamente sazonado.",
+    "image": "https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "extra-papas",
+    "name": "Porción de papas",
+    "price": 60,
+    "category": "comidas",
+    "subcategory": "extras",
+    "description": "Papas francesas fritas sazonadas con sal marina fina.",
+    "image": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "americano",
+    "name": "Café Americano",
+    "price": 60,
+    "category": "bebidas",
+    "subcategory": "bebidas_calientes",
+    "description": "Café espresso diluido con agua caliente, resaltando la pureza de los granos de altura de Waslala.",
+    "image": "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "capuccino-sencillo",
+    "name": "Capuccino sencillo",
+    "price": 75,
+    "category": "bebidas",
+    "subcategory": "bebidas_calientes",
+    "description": "Café espresso con partes iguales de leche vaporizada y espuma aterciopelada.",
+    "image": "https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "capuccino-doble",
+    "name": "Capuccino doble",
+    "price": 90,
+    "category": "bebidas",
+    "subcategory": "bebidas_calientes",
+    "description": "Espresso doble con una nube de espuma de leche densa y cremosa, decorado con cacao.",
+    "image": "https://images.unsplash.com/photo-1534778101976-62847782c213?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "mocaccino",
+    "name": "Café Mocaccino",
+    "price": 100,
+    "category": "bebidas",
+    "subcategory": "bebidas_calientes",
+    "description": "Combinación perfecta de espresso, jarabe de chocolate artesanal, leche vaporizada y una corona de espuma.",
+    "image": "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "dirty-chai-tea",
+    "name": "Dirty chai tea",
+    "price": 90,
+    "category": "bebidas",
+    "subcategory": "bebidas_calientes",
+    "description": "Té negro especiado (Chai) endulzado con un shot de espresso Waslaleño.",
+    "image": "https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "frappuccino",
+    "name": "Frappuccino Clásico",
+    "price": 100,
+    "category": "bebidas",
+    "subcategory": "bebidas_frias",
+    "description": "Café espresso licuado con hielo, leche premium y jarabe de crema inglesa.",
+    "image": "https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "frappe-caramelo",
+    "name": "Frappe de caramelo",
+    "price": 115,
+    "category": "bebidas",
+    "subcategory": "bebidas_frias",
+    "description": "Licuado cremoso de café y caramelo líquido, coronado con nata montada y un toque de toffee.",
+    "image": "https://images.unsplash.com/photo-1596152497892-ec382a818788?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "frappe-chocolate",
+    "name": "Frappe de chocolate",
+    "price": 115,
+    "category": "bebidas",
+    "subcategory": "bebidas_frias",
+    "description": "Sabor intenso a cacao Waslaleño triturado con hielo y leche condensada suave.",
+    "image": "https://images.unsplash.com/photo-1541658016709-82535e94bc69?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "frappe-oreo",
+    "name": "Frappe de galleta Oreo",
+    "price": 125,
+    "category": "bebidas",
+    "subcategory": "bebidas_frias",
+    "description": "Fusión helada de galletas Oreo trituradas, vainilla francesa, leche condensada y nata.",
+    "image": "https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "frappe-mani",
+    "name": "Frappe de maní tostado",
+    "price": 120,
+    "category": "bebidas",
+    "subcategory": "bebidas_frias",
+    "description": "Deliciosa e inusual combinación de crema de maní artesanal, café helado y trozos de maní salado.",
+    "image": "https://images.unsplash.com/photo-1534778101976-62847782c213?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "frappe-vainilla",
+    "name": "Frappe de Vainilla Francesa",
+    "price": 140,
+    "category": "bebidas",
+    "subcategory": "bebidas_frias",
+    "description": "Helado indulgente de vainilla francesa de Madagascar, mezclado con espresso concentrado.",
+    "image": "https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "iced-latte",
+    "name": "Iced Latte Clásico",
+    "price": 90,
+    "category": "bebidas",
+    "subcategory": "bebidas_frias",
+    "description": "Espresso vertido suavemente sobre leche fría y cubos de hielo transparentes.",
+    "image": "https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "iced-latte-saborizado",
+    "name": "Iced Latte Saborizado",
+    "price": 110,
+    "category": "bebidas",
+    "subcategory": "bebidas_frias",
+    "description": "Iced latte con jarabes artesanales a elegir: Caramelo, avellana, vainilla, amaretto o té chai.",
+    "image": "https://images.unsplash.com/photo-1461023717517-238b712c40ac?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "batido-fresa",
+    "name": "Batido natural de fresa",
+    "price": 130,
+    "category": "bebidas",
+    "subcategory": "bebidas_frias",
+    "description": "Fresas silvestres trituradas con leche fresca o agua aromatizada.",
+    "image": "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "batido-blueberry",
+    "name": "Batido natural de Blueberry",
+    "price": 130,
+    "category": "bebidas",
+    "subcategory": "bebidas_frias",
+    "description": "Arándanos maduros licuados con yogur griego y un delicado hilo de miel de abeja.",
+    "image": "https://images.unsplash.com/photo-1626256111162-8418086055bc?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "batido-frutas-mixtas",
+    "name": "Batido de frutas mixtas",
+    "price": 120,
+    "category": "bebidas",
+    "subcategory": "bebidas_frias",
+    "description": "Mango, piña, papaya y banano Waslaleño, licuados hasta conseguir una sedosa textura.",
+    "image": "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "limonada-clasica",
+    "name": "Limonada clásica fresca",
+    "price": 90,
+    "category": "bebidas",
+    "subcategory": "limonadas",
+    "description": "Limones persas recién exprimidos con agua purificada helada y azúcar de caña.",
+    "image": "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "limonada-hierbabuena",
+    "name": "Limonada con hierbabuena",
+    "price": 110,
+    "category": "bebidas",
+    "subcategory": "limonadas",
+    "description": "La frescura inigualable del limón combinada con hojas de hierbabuena maceradas al instante.",
+    "image": "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "limonada-frutos-rojos",
+    "name": "Limonada de frutos rojos",
+    "price": 120,
+    "category": "bebidas",
+    "subcategory": "limonadas",
+    "description": "Limonada gourmet macerada con jugosos arándanos, fresas y frambuesas de la zona.",
+    "image": "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=500&q=80"
+  },
+  {
+    "id": "limonada-clasica-frutos-rojos",
+    "name": "Limonada clásica frutos rojos",
+    "price": 105,
+    "category": "bebidas",
+    "subcategory": "limonadas",
+    "description": "Una versión tradicional refrescante con capas de jarabe natural de frutos silvestres rojos.",
+    "image": "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=500&q=80"
+  }
+];
+
+    // Global application state
+    let activeCategory = 'comidas';
+    let selectedSubcategory = 'todos';
+    let searchQuery = '';
+    let cart = [];
+
+    // Initialize application Lucide Icons
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      switchCategory('comidas');
+      updateCartUI();
+    });
+
+    // Toggle scrollbar locks
+    function toggleCart() {
+      const drawer = document.getElementById('cart-drawer');
+      const backdrop = document.getElementById('cart-backdrop');
+      const panel = document.getElementById('cart-panel');
+      const isHidden = drawer.classList.contains('hidden');
+
+      if (isHidden) {
+        drawer.classList.remove('hidden');
+        setTimeout(() => {
+          backdrop.classList.replace('opacity-0', 'opacity-100');
+          panel.classList.replace('translate-x-full', 'translate-x-0');
+        }, 30);
+      } else {
+        backdrop.classList.replace('opacity-100', 'opacity-0');
+        panel.classList.replace('translate-x-0', 'translate-x-full');
+        setTimeout(() => {
+          drawer.classList.add('hidden');
+        }, 300);
+      }
+    }
+
+    // Toggle dining structure details
+    function toggleTableInput() {
+      const delType = document.getElementById('del-type').value;
+      const tableGroup = document.getElementById('table-number-group');
+      if (delType === 'llevar') {
+        tableGroup.style.opacity = '0.35';
+        tableGroup.style.pointerEvents = 'none';
+        document.getElementById('table-num').value = '';
+      } else {
+        tableGroup.style.opacity = '1';
+        tableGroup.style.pointerEvents = 'auto';
+      }
+    }
+
+    // Move to category view
+    function switchCategory(category) {
+      activeCategory = category;
+      selectedSubcategory = 'todos';
+      
+      const btnComidas = document.getElementById('btn-cat-comidas');
+      const btnBebidas = document.getElementById('btn-cat-bebidas');
+      
+      if (category === 'comidas') {
+        btnComidas.className = 'flex-1 py-3 text-center rounded-xl text-sm font-bold transition-all bg-[#2F1F17] text-[#FDFBF7]';
+        btnBebidas.className = 'flex-1 py-3 text-center rounded-xl text-sm font-bold transition-all text-[#4B3621] hover:text-[#2F1F17]';
+      } else {
+        btnBebidas.className = 'flex-1 py-3 text-center rounded-xl text-sm font-bold transition-all bg-[#2F1F17] text-[#FDFBF7]';
+        btnComidas.className = 'flex-1 py-3 text-center rounded-xl text-sm font-bold transition-all text-[#4B3621] hover:text-[#2F1F17]';
+      }
+
+      renderSubcategories();
+      filterMenuItems();
+    }
+
+    // Extract subcategories dynamically
+    const SUBCATEGORIES_LABELS = {
+      antojitos: 'Antojitos',
+      platos_fuertes: 'Platos Fuertes',
+      cortes_premium: 'Cortes Premium 🔥',
+      extras: 'Acompañamientos',
+      bebidas_calientes: 'Calientes',
+      bebidas_frias: 'Frías & Frappés ❄️',
+      limonadas: 'Limonadas'
+    };
+
+    function renderSubcategories() {
+      const parent = document.getElementById('subcategories-container');
+      parent.innerHTML = '';
+
+      // Add 'Todos' subtab
+      const allBtn = document.createElement('button');
+      allBtn.className = `px-4 py-1.5 rounded-full text-xs font-semibold border transition-all ${selectedSubcategory === 'todos' ? 'bg-rose-500 border-rose-500 text-[#FDFBF7]' : 'bg-[#FAF8F5] border-[#EBE3D5] text-[#5A493B] hover:border-stone-400'}`;
+      allBtn.textContent = 'Todos';
+      allBtn.onclick = () => {
+        selectedSubcategory = 'todos';
+        renderSubcategories();
+        filterMenuItems();
+      };
+      parent.appendChild(allBtn);
+
+      // Unique sublabels found
+      const activeSubs = new Set();
+      MENU_ITEMS.forEach(itm => {
+        if (itm.category === activeCategory) activeSubs.add(itm.subcategory);
+      });
+
+      activeSubs.forEach(sub => {
+        const btn = document.createElement('button');
+        const isSel = selectedSubcategory === sub;
+        btn.className = `px-4 py-1.5 rounded-full text-xs font-semibold border transition-all ${isSel ? 'bg-rose-500 border-rose-500 text-[#FDFBF7]' : 'bg-[#FAF8F5] border-[#EBE3D5] text-[#5A493B] hover:border-stone-400'}`;
+        btn.textContent = SUBCATEGORIES_LABELS[sub] || sub;
+        btn.onclick = () => {
+          selectedSubcategory = sub;
+          renderSubcategories();
+          filterMenuItems();
+        };
+        parent.appendChild(btn);
+      });
+    }
+
+    // Scroll trigger helper
+    function scrollToMenu() {
+      document.getElementById('menu-grid').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Filter elements on screen
+    function filterMenuItems() {
+      searchQuery = document.getElementById('search-input').value.toLowerCase();
+      const grid = document.getElementById('menu-items-grid');
+      const emptyState = document.getElementById('empty-state');
+      grid.innerHTML = '';
+
+      const list = MENU_ITEMS.filter(itm => {
+        const matchesCategory = itm.category === activeCategory;
+        const matchesSubcategory = selectedSubcategory === 'todos' || itm.subcategory === selectedSubcategory;
+        const matchesQuery = itm.name.toLowerCase().includes(searchQuery) || itm.description.toLowerCase().includes(searchQuery);
+        return matchesCategory && matchesSubcategory && matchesQuery;
+      });
+
+      if (list.length === 0) {
+        emptyState.classList.remove('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+        list.forEach(itm => {
+          const card = document.createElement('div');
+          card.className = "bg-white overflow-hidden rounded-3xl border border-[#F5EFE6] transition-all duration-300 hover:shadow-xl hover:translate-y-[-4px] flex flex-col h-full";
+          
+          card.innerHTML = `
+            <div class="relative aspect-[4/3] w-full overflow-hidden bg-stone-100">
+              <img src="${itm.image}" alt="${itm.name}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+              <span class="absolute top-3 right-3 bg-white/95 backdrop-blur-xs px-3 py-1 rounded-full text-[10px] font-bold tracking-wider text-[#2F1F17] border border-[#F2EFE9] uppercase">C$ ${itm.price}</span>
+            </div>
+            <div class="p-5 flex-1 flex flex-col justify-between">
+              <div>
+                <h3 class="font-serif text-lg font-bold text-[#2F1F17] leading-tight mb-2">${itm.name}</h3>
+                <p class="text-xs text-[#5A493B] leading-relaxed line-clamp-3 font-light mb-4">${itm.description}</p>
+              </div>
+              <button onclick="addToCart('${itm.id}')" class="w-full py-2.5 px-4 bg-[#F9F6F0] hover:bg-[#2F1F17] text-[#4B3621] hover:text-[#FDFBF7] rounded-xl font-bold text-xs tracking-wide transition-all flex items-center justify-center space-x-2 border border-[#EBE3D5]">
+                <span>Agregar</span>
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+      }
+      lucide.createIcons();
+    }
+
+    // Actions add to cart with popup feedback
+    function addToCart(itemId) {
+      const original = MENU_ITEMS.find(i => i.id === itemId);
+      if (!original) return;
+
+      const exist = cart.find(ci => ci.item.id === itemId);
+      if (exist) {
+        exist.quantity++;
+      } else {
+        cart.push({ item: original, quantity: 1 });
+      }
+
+      showToast(`¡Se añadió ${original.name}!`);
+      updateCartUI();
+    }
+
+    function showToast(text) {
+      const t = document.getElementById('toast');
+      document.getElementById('toast-text').textContent = text;
+      t.className = t.className.replace('opacity-0 translate-y-[-20px]', 'opacity-100 translate-y-0');
+      setTimeout(() => {
+        t.className = t.className.replace('opacity-100 translate-y-0', 'opacity-0 translate-y-[-20px]');
+      }, 2300);
+    }
+
+    // Refresh structural representations
+    function updateCartQty(itemId, val) {
+      const idx = cart.findIndex(c => c.item.id === itemId);
+      if (idx === -1) return;
+
+      cart[idx].quantity += val;
+      if (cart[idx].quantity < 1) cart[idx].quantity = 1;
+
+      updateCartUI();
+    }
+
+    function removeCartItem(itemId) {
+      const idx = cart.findIndex(c => c.item.id === itemId);
+      if (idx === -1) return;
+      
+      const name = cart[idx].item.name;
+      cart.splice(idx, 1);
+      showToast(`Removido ${name} de tu pedido`);
+      updateCartUI();
+    }
+
+    function updateCartUI() {
+      const totalCount = cart.reduce((tot, ci) => tot + ci.quantity, 0);
+      const totalPrice = cart.reduce((tot, ci) => tot + (ci.item.price * ci.quantity), 0);
+
+      const navBadge = document.getElementById('cart-badge');
+      const floatBadge = document.getElementById('float-badge');
+      
+      if (totalCount > 0) {
+        navBadge.classList.remove('hidden');
+        navBadge.textContent = totalCount;
+        floatBadge.textContent = totalCount;
+      } else {
+        navBadge.classList.add('hidden');
+        floatBadge.textContent = '0';
+      }
+
+      // Draw panel code items representation
+      const container = document.getElementById('cart-items-container');
+      container.innerHTML = '';
+
+      if (cart.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-16 space-y-3">
+            <div class="w-12 h-12 bg-rose-50 rounded-full flex items-center justify-center text-rose-300 mx-auto">
+              <i data-lucide="shopping-bag" class="w-6 h-6"></i>
+            </div>
+            <p class="text-stone-400 font-semibold text-sm">Tu bandeja está vacía</p>
+            <p class="text-[11px] text-stone-400 font-light px-6">Agrega los platillos que más te gusten desde el menú interactivo.</p>
+          </div>
+        `;
+      } else {
+        cart.forEach(ci => {
+          const div = document.createElement('div');
+          div.className = 'flex items-center space-x-3 bg-white p-3 rounded-2xl border border-[#F5EFE6]';
+          div.innerHTML = `
+            <img src="${ci.item.image}" class="w-12 h-12 rounded-xl object-cover" alt="">
+            <div class="flex-1 min-w-0">
+              <h4 class="font-bold text-xs text-[#2F1F17] truncate">${ci.item.name}</h4>
+              <span class="text-[10px] text-rose-500 font-bold">C$ ${ci.item.price}</span>
+            </div>
+            <div class="flex items-center space-x-1.5 border border-stone-200 rounded-full px-2 py-0.5 bg-stone-50">
+              <button onclick="updateCartQty('${ci.item.id}', -1)" class="p-0.5"><i data-lucide="minus" class="w-3.5 h-3.5 text-stone-600"></i></button>
+              <span class="font-bold text-xs font-mono text-stone-800 min-w-[14px] text-center">${ci.quantity}</span>
+              <button onclick="updateCartQty('${ci.item.id}', 1)" class="p-0.5"><i data-lucide="plus" class="w-3.5 h-3.5 text-stone-600"></i></button>
+            </div>
+            <button onclick="removeCartItem('${ci.item.id}')" class="p-1 hover:text-red-500 text-stone-400 transition-colors">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+          `;
+          container.appendChild(div);
+        });
+      }
+
+      document.getElementById('cart-total-price').textContent = 'C$ ' + totalPrice;
+      lucide.createIcons();
+    }
+
+    // Build the grand text WhatsApp payload and bounce
+    function sendOrder() {
+      if (cart.length === 0) {
+        alert('¡Tu carrito está vacío! Agrega algunos deliciosos platillos antes de continuar.');
+        return;
+      }
+
+      const clientName = document.getElementById('cust-name').value || 'Invitado';
+      const delType = document.getElementById('del-type').value;
+      const notes = document.getElementById('ord-notes').value;
+      const table = document.getElementById('table-num').value;
+      const totalPrice = cart.reduce((tot, ci) => tot + (ci.item.price * ci.quantity), 0);
+
+      // Build text formatting
+      let msg = '☕ *¡Hola, Amor y Café! Gusto en saludarte. Me gustaría registrar el siguiente pedido:* \n\n';
+      msg += `👤 *Cliente:* ${clientName}\n`;
+      msg += `📍 *Estilo:* ${delType === 'local' ? 'Consumo en Local' : 'Para llevar'}\n`;
+      if (delType === 'local' && table) {
+        msg += `🪑 *Mesa:* Nº ${table}\n`;
+      }
+      msg += '──────────────────\n\n';
+
+      cart.forEach((ci, idx) => {
+        msg += `${idx+1}️⃣ *${ci.quantity}x* ${ci.item.name} (~C$ ${ci.item.price} c/u~)\n`;
+        msg += `    *Subtotal:* C$ ${ci.item.price * ci.quantity}\n`;
+      });
+
+      msg += '\n──────────────────\n';
+      if (notes.trim()) {
+        msg += `📝 *Observaciones adicionales:* "${notes}"\n`;
+      }
+      msg += `💰 *Total a pagar:* C$ ${totalPrice}\n\n`;
+      msg += '⏰ _Pedido hecho desde el menú interactivo web._\n¿Me podrían confirmar mi orden?';
+
+      const targetPh = '50584593326'; // Amor y Cafe Waslala
+      window.open(`https://wa.me/${targetPh}?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+  </script>
+</body>
+</html>

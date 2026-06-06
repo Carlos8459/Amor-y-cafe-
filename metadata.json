@@ -1,0 +1,8 @@
+{
+  "name": "Remix: Amor y Café - Waslala",
+  "description": "Menú interactivo y sistema de pedidos por WhatsApp para el restaurante de Waslala",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
