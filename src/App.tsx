@@ -35,6 +35,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MENU_ITEMS, MenuItem, CATEGORIES_LABELS, SUBCATEGORIES_LABELS } from './data';
+import logoAmorYCafe from './assets/images/logo_amor_y_cafe_1780705355382.png';
 
 interface CartItem {
   item: MenuItem;
@@ -290,7 +291,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] text-[#2F1F17] font-sans antialiased relative selection:bg-rose-100 selection:text-rose-900">
+    <div className="min-h-screen bg-[#FDFBF7] text-[#2F1F17] font-sans antialiased relative selection:bg-rose-100 selection:text-rose-900 pb-28 sm:pb-24">
       
       {/* Elegantes Elementos Flotantes de Fondo Auténticos (vibe café, amor, elegancia) */}
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none select-none z-0 overflow-hidden">
@@ -350,7 +351,7 @@ export default function App() {
                 <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0 border-2 border-rose-300 shadow-xs bg-white">
                   <img 
                     referrerPolicy="no-referrer" 
-                    src="/src/assets/images/logo_amor_y_cafe_1780705355382.png" 
+                    src={logoAmorYCafe} 
                     alt="Amor y Café Logo" 
                     className="w-full h-full object-cover" 
                   />
@@ -408,7 +409,7 @@ export default function App() {
           <div className="flex items-center gap-3">
             <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-[#F4EBE0] bg-white flex items-center justify-center shadow-md shrink-0 transition-transform hover:scale-105 duration-300">
               <img 
-                src="/src/assets/images/logo_amor_y_cafe_1780705355382.png" 
+                src={logoAmorYCafe} 
                 alt="Amor y Café Logo" 
                 className="w-full h-full object-cover scale-105" 
                 referrerPolicy="no-referrer"
@@ -817,24 +818,56 @@ export default function App() {
         </div>
       </section>
 
-      {/* ACCIÓN FLOTANTE CARRITO INFERIOR DERECHO */}
-      <div className="fixed bottom-6 right-6 z-50 flex flex-col space-y-3 items-end">
-        <motion.button 
-          id="btn-cart-float"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => setIsCartOpen(true)}
-          className="bg-[#2F1F17] hover:bg-rose-500 text-[#FDFBF7] p-5 rounded-full shadow-2xl flex items-center justify-center border border-[#1a100a] transition-all cursor-pointer relative"
-          aria-label="Abrir carrito"
-        >
-          <ShoppingBag className="w-6 h-6 animate-pulse" />
-          {totalCartCount > 0 && (
-            <span className="absolute -top-1 -right-1 bg-rose-500 text-white font-mono text-xs w-6 h-6 rounded-full flex items-center justify-center font-black border-2 border-[#FDFBF7] shadow-xl">
-              {totalCartCount}
-            </span>
-          )}
-        </motion.button>
-      </div>
+      {/* BARRA FIJA INFERIOR - INFORMACIÓN DEL PEDIDO Y CHECKOUT */}
+      <AnimatePresence>
+        {totalCartCount > 0 && (
+          <div className="fixed bottom-5 left-0 right-0 z-40 px-4 flex justify-center pointer-events-none">
+            <motion.div
+              initial={{ y: 45, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 45, opacity: 0 }}
+              transition={{ type: "tween", ease: [0.16, 1, 0.3, 1], duration: 0.35 }}
+              className="pointer-events-auto w-full max-w-md md:max-w-xl bg-gradient-to-r from-[#211510] to-[#2F1F17] text-[#FAF8F5] py-3 px-4 sm:px-6 rounded-full shadow-[0_12px_40px_rgba(47,31,23,0.4)] border border-[#E4D1B9]/25"
+            >
+              <div 
+                onClick={() => setIsCartOpen(true)}
+                className="flex items-center justify-between gap-4 cursor-pointer group"
+              >
+                {/* Información Crucial del Pedido */}
+                <div className="flex items-center gap-3.5 min-w-0">
+                  <div className="relative w-11 h-11 rounded-full bg-stone-900/80 flex items-center justify-center text-rose-300 border border-stone-800 shrink-0 shadow-inner group-hover:scale-105 transition-transform duration-300">
+                    <ShoppingBag className="w-5 h-5 text-rose-400" />
+                    <span className="absolute -top-1 -right-1 bg-gradient-to-br from-rose-400 to-rose-500 text-white font-mono text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-black border border-[#2F1F17] shadow-md">
+                      {totalCartCount}
+                    </span>
+                  </div>
+                  
+                  <div className="text-left min-w-0">
+                    <span className="block font-serif font-black text-sm sm:text-base text-white tracking-wide leading-tight">
+                      Tu Pedido Listo
+                    </span>
+                    <p className="font-mono text-xs text-stone-300 mt-0.5 whitespace-nowrap">
+                      Consumo: <span className="font-bold text-rose-300">C$ {totalCartPrice}</span>
+                    </p>
+                  </div>
+                </div>
+
+                {/* Botón para redireccionar al Modal */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsCartOpen(true);
+                  }}
+                  className="bg-gradient-to-r from-rose-400 to-rose-500 hover:from-rose-500 hover:to-rose-600 active:scale-95 text-white font-serif font-semibold px-5 sm:px-6 py-2 sm:py-2.5 rounded-full flex items-center gap-2 shadow-md shadow-rose-500/10 hover:shadow-rose-500/30 transition-all duration-300 cursor-pointer text-xs sm:text-sm tracking-wide shrink-0"
+                >
+                  <span>Ver Pedido</span>
+                  <span className="font-serif leading-none text-sm">➔</span>
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* VENTANA MODAL EMERGENTE Y MINIMALISTA DEL CARRITO (Con Desenfoque de Fondo backdrop-blur) */}
       <AnimatePresence>
