@@ -897,11 +897,6 @@ export default function App() {
                 <div className="flex items-center gap-2 text-[#4E5B6A]">
                   <ShoppingBag className="w-5 h-5 text-rose-400" />
                   <h3 className="font-serif text-lg font-black tracking-tight">Tu Bolsa de Amor</h3>
-                  {totalCartCount > 0 && (
-                    <span className="text-[10px] font-mono bg-rose-50 px-2.5 py-0.5 rounded-full text-rose-600 font-bold ml-1.5 uppercase border border-rose-100">
-                      {totalCartCount} {totalCartCount === 1 ? 'item' : 'items'}
-                    </span>
-                  )}
                 </div>
                 
                 {/* Botón de Cierre */}
@@ -1101,7 +1096,7 @@ export default function App() {
                         <svg className="w-5 h-5 fill-current text-white shrink-0 group-hover:scale-110 transition-transform" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                           <path d="M12.004 2C6.48 2 2 6.48 2 12c0 1.76.46 3.42 1.27 4.88l-1.21 4.43c-.08.3.01.62.24.84.17.17.4.25.64.25.07 0 .13 0 .2-.02l4.52-1.23c1.4.74 2.97 1.15 4.58 1.15 5.52 0 10-4.48 10-10S17.52 2 12.004 2zM12 20.2c-1.51 0-2.98-.38-4.3-1.09l-.3-.16-2.58.7.72-2.6-.18-.3c-.78-1.32-1.2-2.83-1.2-4.39 0-4.52 3.68-8.2 8.2-8.2s8.2 3.68 8.2 8.2-3.68 8.2-8.2 8.2zm4.4-6.31c-.24-.12-1.42-.7-1.64-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06a6.56 6.56 0 0 1-1.92-1.18c-.71-.63-1.18-1.4-1.32-1.64-.14-.24-.01-.37.11-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42l-.74-1.78c-.2-.48-.4-.41-.55-.42-.14-.01-.3-.01-.46-.01a.88.88 0 0 0-.64.3c-.22.24-.84.82-.84 2s.87 2.33.99 2.49c.12.16 1.7 2.6 4.14 3.65.58.25 1.03.4 1.38.51.58.18 1.11.16 1.53.1.47-.07 1.42-.58 1.62-1.13.2-.55.2-1.02.14-1.12-.06-.1-.22-.16-.46-.28z"/>
                         </svg>
-                        <span className="font-sans tracking-widest whitespace-nowrap">Confirmar Pedido por WhatsApp</span>
+                        <span className="font-sans tracking-widest whitespace-nowrap">Confirmar pedido</span>
                       </button>
                       <p className="text-[10px] text-stone-400 font-light text-center leading-normal max-w-xs px-2">
                         Serás redirigido de inmediato a WhatsApp para validar y agilizar la preparación de tu mesa en Amor y Café.
