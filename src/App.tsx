@@ -81,6 +81,89 @@ const getExtendedSearchTerms = (query: string): string[] => {
   return terms;
 };
 
+// Local heuristic for chef specials (Serverless Client-Only Heuristics)
+const getLocalClientSpecials = (weather: string, timeOfDay: string) => {
+  let specialIds: string[] = [];
+  let theme = "";
+  let explanation = "";
+
+  if (weather === "lluvioso" || weather === "frio") {
+    theme = "Abrazo Cálido Waslaleño 🌧️";
+    if (timeOfDay === "manana") {
+      theme = "Amargor Suave & Abrigo 🌅";
+      explanation = "Con cielos grises en Waslala, nada como un Capuccino Sencillo caliente y Tostones con Queso recién sacados de la paila.";
+      specialIds = ["capuccino-sencillo", "tostones-queso", "capuccino-doble", "dirty-chai-tea", "quesadillas-pollo"];
+    } else if (timeOfDay === "tarde") {
+      theme = "Cafetería y Tarde Lluviosa ☕";
+      explanation = "Tarde nublada y lluviosa. Refúgiate con un reconfortante Café Mocaccino caliente y unas deliciosas Quesadillas de Pollo doradas.";
+      specialIds = ["mocaccino", "quesadillas-pollo", "dirty-chai-tea", "capuccino-sencillo", "tostones-queso", "frappe-oreo"];
+    } else {
+      theme = "Noche de Lluvia y Sabor 🔥";
+      explanation = "Para abrigar la noche fresca, te consentimos con el calor de un Rib Eye Premium y un cremoso Capuccino Doble.";
+      specialIds = ["rib-eye", "capuccino-doble", "tostones-queso", "new-york", "dirty-chai-tea", "extra-papas"];
+    }
+  } else {
+    // Soleado / Caluroso
+    if (timeOfDay === "manana") {
+      theme = "Mañana Radiante Waslala ☀️";
+      explanation = "Para iniciar este día soleado con frescura y energía, degusta un refrescante Iced Latte Clásico y Hamburguesa de Res.";
+      specialIds = ["iced-latte", "hamburguesa-res", "limonada-hierbabuena", "salchipapas", "tostones-queso"];
+    } else if (timeOfDay === "tarde") {
+      theme = "Delicias Frías para la Tarde 🍧";
+      explanation = "¡El sol de Waslala está radiante! Date un gran gusto helado con el inigualable Frappuccino de Oreos de la Casa.";
+      specialIds = ["frappe-oreo", "frappe-caramelo", "salchipapas", "limonada-frutos-rojos", "quesadillas-pollo"];
+    } else {
+      theme = "Sabor y Brisa Nocturna 🌙";
+      explanation = "Disfruta de la noche con una refrescante Limonada de Frutos Rojos y nuestro exquisito New York Strip.";
+      specialIds = ["limonada-frutos-rojos", "new-york", "extra-papas", "hamburguesa-res", "limonada-hierbabuena"];
+    }
+  }
+  return { theme, explanation, specialIds };
+};
+
+// Local heuristic recommendations (Serverless Client-Only Heuristics)
+const getLocalClientRecommendations = (cartItems: any[]) => {
+  const currentIds = new Set(cartItems.map((it) => it.id));
+  
+  // Classify items in cart
+  const hasFood = cartItems.some((it) => it.category === "comidas");
+  const hasDrink = cartItems.some((it) => it.category === "bebidas");
+
+  let recs: string[] = [];
+  let reason = "";
+
+  if (hasFood && !hasDrink) {
+    // Recommend matching beverages
+    recs = ["limonada-hierbabuena", "iced-latte", "capuccino-sencillo", "americano", "batido-fresa"];
+    reason = "Para acompañar tus platillos, nada como un elíxir fresco o un café de altura.";
+  } else if (hasDrink && !hasFood) {
+    // Recommend matching foods
+    recs = ["tostones-queso", "quesadillas-pollo", "salchipapas", "hamburguesa-res"];
+    reason = "El maridaje ideal para consentir tu paladar con sabor waslaleño.";
+  } else {
+    // Has both, recommend sweet treat or extra
+    recs = ["frappe-oreo", "extra-papas", "frappe-caramelo", "salchipapas"];
+    reason = "El broche de oro dulce o extra crujiente para tu pedido perfecto.";
+  }
+
+  // Filter out items already in the cart and limit to 2 suggestions
+  const filteredRecs = recs.filter(id => !currentIds.has(id)).slice(0, 2);
+
+  if (filteredRecs.length === 0) {
+    const backupList = ["tostones-queso", "limonada-hierbabuena", "capuccino-sencillo"];
+    const backup = backupList.filter(id => !currentIds.has(id)).slice(0, 2);
+    return {
+      recommendations: backup,
+      reason: "Las mejores recomendaciones de la casa elegidas para ti hoy."
+    };
+  }
+
+  return {
+    recommendations: filteredRecs,
+    reason
+  };
+};
+
 export default function App() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
@@ -185,46 +268,19 @@ export default function App() {
   const [showDeveloperModal, setShowDeveloperModal] = useState<boolean>(false);
 
   useEffect(() => {
-    let isMounted = true;
-    const fetchAiSpecials = async () => {
-      setIsAiSpecialsLoading(true);
-      try {
-        const response = await fetch("/api/ai-specials", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            weather: selectedWeather,
-            timeOfDay: selectedTime
-          })
-        });
-        if (!response.ok) throw new Error("API Specials failure");
-        const data = await response.json();
-        if (isMounted) {
-          setAiSpecialsTheme(data.theme || 'Recomendación de la Casa');
-          setAiSpecialsExplanation(data.explanation || 'Platillos seleccionados con cariño para Waslala.');
-          if (data.specialIds && Array.isArray(data.specialIds)) {
-            const items = data.specialIds
-              .map((id: string) => MENU_ITEMS.find(it => it.id === id))
-              .filter((it): it is MenuItem => !!it);
-            setAiSpecialsItems(items);
-          }
-          // Reset slide to cover new content
-          setActiveSpecialsSlide(0);
-        }
-      } catch (err) {
-        console.warn("[AISpecials] Frontend fetch failed, using local offline logic:", err);
-      } finally {
-        if (isMounted) {
-          setIsAiSpecialsLoading(false);
-        }
-      }
-    };
-
-    fetchAiSpecials();
-
-    return () => {
-      isMounted = false;
-    };
+    setIsAiSpecialsLoading(true);
+    // Client-side execution without server dependency
+    const data = getLocalClientSpecials(selectedWeather, selectedTime);
+    setAiSpecialsTheme(data.theme || 'Recomendación de la Casa');
+    setAiSpecialsExplanation(data.explanation || 'Platillos seleccionados con cariño para Waslala.');
+    if (data.specialIds && Array.isArray(data.specialIds)) {
+      const items = data.specialIds
+        .map((id: string) => MENU_ITEMS.find(it => it.id === id))
+        .filter((it): it is MenuItem => !!it);
+      setAiSpecialsItems(items);
+    }
+    setActiveSpecialsSlide(0);
+    setIsAiSpecialsLoading(false);
   }, [selectedWeather, selectedTime]);
 
   // Specials Auto-Rotation effect
@@ -259,56 +315,29 @@ export default function App() {
       return;
     }
 
-    let isMounted = true;
-    const fetchAiRecommendations = async () => {
-      setIsAiLoading(true);
-      try {
-        const payload = cart.map(ci => ({
-          id: ci.item.id,
-          name: ci.item.name,
-          category: ci.item.category,
-          subcategory: ci.item.subcategory
-        }));
+    setIsAiLoading(true);
 
-        const response = await fetch("/api/recommendations", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ cartItems: payload })
-        });
-        
-        if (!response.ok) throw new Error("Server error");
-        
-        const data = await response.json();
-        
-        if (isMounted && data.recommendations) {
-          // Resolve IDs to MenuItem objects
-          const resolved = data.recommendations
-            .map((id: string) => MENU_ITEMS.find(it => it.id === id))
-            .filter((it: MenuItem | undefined): it is MenuItem => !!it);
-          
-          setAiRecommendations(resolved);
-          setAiReason(data.reason || '');
-        }
-      } catch (error) {
-        console.log("[Recommendations] Switched to optimized local heuristic.");
-        if (isMounted) {
-          setAiRecommendations([]);
-          setAiReason('');
-        }
-      } finally {
-        if (isMounted) {
-          setIsAiLoading(false);
-        }
-      }
-    };
-
-    // Debounce slightly to avoid aggressive API requests as quantity is updated
+    // Debounce slightly to simulate smart calculation
     const timer = setTimeout(() => {
-      fetchAiRecommendations();
-    }, 450);
+      const payload = cart.map(ci => ({
+        id: ci.item.id,
+        name: ci.item.name,
+        category: ci.item.category,
+        subcategory: ci.item.subcategory
+      }));
+
+      const data = getLocalClientRecommendations(payload);
+
+      const resolved = data.recommendations
+        .map((id: string) => MENU_ITEMS.find(it => it.id === id))
+        .filter((it: MenuItem | undefined): it is MenuItem => !!it);
+
+      setAiRecommendations(resolved);
+      setAiReason(data.reason || '');
+      setIsAiLoading(false);
+    }, 250);
 
     return () => {
-      isMounted = false;
       clearTimeout(timer);
     };
   }, [cartSerializedIds]);
