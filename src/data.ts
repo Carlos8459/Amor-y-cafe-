@@ -2,7 +2,7 @@ export interface MenuItem {
   id: string;
   name: string;
   price: number;
-  category: 'comidas' | 'bebidas';
+  category: 'comidas' | 'bebidas' | 'postres';
   subcategory: string;
   description: string;
   image: string;
@@ -11,6 +11,7 @@ export interface MenuItem {
 export const CATEGORIES_LABELS: Record<string, string> = {
   comidas: 'Platillos & Antojitos',
   bebidas: 'Bebidas & Elixires',
+  postres: 'Postres & Dulces Antojos',
 };
 
 export const SUBCATEGORIES_LABELS: Record<string, string> = {
@@ -21,6 +22,7 @@ export const SUBCATEGORIES_LABELS: Record<string, string> = {
   bebidas_calientes: 'Cafetería Caliente',
   bebidas_frias: 'Frappés & Bebidas Frías',
   limonadas: 'Limonadas Especiales',
+  postres: 'Postres & Dulces de la Casa',
 };
 
 export const MENU_ITEMS: MenuItem[] = [
@@ -360,5 +362,33 @@ export const MENU_ITEMS: MenuItem[] = [
     subcategory: 'limonadas',
     description: 'Una versión tradicional refrescante con capas de jarabe natural de frutos silvestres rojos.',
     image: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=500&q=80'
+  },
+  // CATEGORÍA: POSTRES -> Dulces Tentaciones
+  {
+    id: 'tres-leches-waslaleño',
+    name: 'Tres Leches Waslaleño',
+    price: 140,
+    category: 'postres',
+    subcategory: 'postres',
+    description: 'Cremoso postre tradicional nicaragüense bañado en tres tipos de leche con un sutil merengue quemado.',
+    image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=500&q=80'
+  },
+  {
+    id: 'brownie-helado',
+    name: 'Brownie Fudge con Helado',
+    price: 120,
+    category: 'postres',
+    subcategory: 'postres',
+    description: 'Fudge brownie de chocolate oscuro servido calientito con una bola helada de vainilla premium.',
+    image: 'https://images.unsplash.com/photo-1541658016709-82535e94bc69?auto=format&fit=crop&w=500&q=80'
+  },
+  {
+    id: 'cheesecake-frutos-rojos',
+    name: 'Cheesecake de Frutos Rojos',
+    price: 135,
+    category: 'postres',
+    subcategory: 'postres',
+    description: 'Sublime tarta de queso crema suave, coronada con jalea densa de fresas y moras cosechadas en Waslala.',
+    image: 'https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=500&q=80'
   }
 ];

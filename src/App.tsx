@@ -37,6 +37,31 @@ import { motion, AnimatePresence } from 'motion/react';
 import { MENU_ITEMS, MenuItem, CATEGORIES_LABELS, SUBCATEGORIES_LABELS } from './data';
 import logoAmorYCafe from './assets/images/logo_amor_y_cafe_1780705355382.png';
 
+// Framer Motion staggered grid entrance animations
+const entranceContainerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.07,
+    }
+  }
+};
+
+const entranceItemVariants = {
+  hidden: { opacity: 0, y: 35, scale: 0.95 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      type: "spring",
+      stiffness: 110,
+      damping: 17,
+    }
+  }
+};
+
 interface CartItem {
   item: MenuItem;
   quantity: number;
@@ -241,21 +266,73 @@ export default function App() {
   }, [cart]);
 
   // AI Specials of Day Custom Configuration (Weather & Time) - Computed completely automatically on load
-  const [selectedWeather] = useState<'lluvioso' | 'frio' | 'soleado'>(() => {
+  const [selectedWeather, setSelectedWeather] = useState<'lluvioso' | 'frio' | 'soleado'>(() => {
     const day = new Date().getDate();
     const hour = new Date().getHours();
-    // Simulate natural varieties of northern Nicaragua weather (Waslala is notoriously rainy/humid and cool in the evenings)
+    // Immediate smart simulated guess for Waslala during loading state
     if (hour >= 18 || hour < 6) {
       return day % 2 === 0 ? 'frio' : 'lluvioso';
     }
     return day % 2 === 0 ? 'soleado' : 'lluvioso';
   });
-  const [selectedTime] = useState<'manana' | 'tarde' | 'noche'>(() => {
+
+  const [selectedTime, setSelectedTime] = useState<'manana' | 'tarde' | 'noche'>(() => {
     const hour = new Date().getHours();
     if (hour >= 6 && hour < 12) return 'manana';
     if (hour >= 12 && hour < 18) return 'tarde';
     return 'noche';
   });
+
+  // Automatically load local device time & real-time live internet weather for Waslala, Nicaragua coordinates
+  useEffect(() => {
+    // 1. Sync exact local hour (device/telephone clock time)
+    const syncDeviceTime = () => {
+      const hour = new Date().getHours();
+      if (hour >= 6 && hour < 12) {
+        setSelectedTime('manana');
+      } else if (hour >= 12 && hour < 18) {
+        setSelectedTime('tarde');
+      } else {
+        setSelectedTime('noche');
+      }
+    };
+    syncDeviceTime();
+
+    // 2. Fetch live weather conditions from a free open meteorological API for Waslala
+    const fetchRealTimeWeather = async (lat: number, lon: number) => {
+      try {
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,rain,weather_code&timezone=auto`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("Weather service unreachable");
+        const json = await res.json();
+
+        if (json && json.current) {
+          const temp = json.current.temperature_2m ?? 23;
+          const rain = json.current.rain ?? 0;
+          const code = json.current.weather_code ?? 0;
+
+          // Classify the local Nicaraguan weather based on standard meteorological categories
+          // WMO codes 50-99 correspond to drizzle, rain, rain showers, and storms
+          const isLluvioso = rain > 0 || (code >= 50 && code <= 99);
+          const isFrio = temp < 19; // Comfortable cold limit for mountainous region of Waslala
+
+          if (isLluvioso) {
+            setSelectedWeather('lluvioso');
+          } else if (isFrio) {
+            setSelectedWeather('frio');
+          } else {
+            setSelectedWeather('soleado');
+          }
+          console.log(`[Internet Weather] Waslala Coords: ${lat}, ${lon}. Temp: ${temp}°C, Lluvia: ${rain}mm, Código: ${code}`);
+        }
+      } catch (err) {
+        console.warn("[Internet Weather] Fallback used due to fetch error:", err);
+      }
+    };
+
+    // Always fetch weather directly for Waslala to respect user's location preference without prompts.
+    fetchRealTimeWeather(13.2333, -85.3833);
+  }, []);
 
   const [aiSpecialsTheme, setAiSpecialsTheme] = useState<string>('Recomendación de la Casa');
   const [aiSpecialsExplanation, setAiSpecialsExplanation] = useState<string>('Platillos seleccionados con cariño para Waslala.');
@@ -446,6 +523,9 @@ export default function App() {
         { id: 'bebidas_calientes', label: 'Bebidas Calientes', items: itemsFilteredBySearch.filter(it => it.category === 'bebidas' && it.subcategory === 'bebidas_calientes') },
         { id: 'bebidas_frias', label: 'Bebidas Frías / Frappés', items: itemsFilteredBySearch.filter(it => it.category === 'bebidas' && it.subcategory === 'bebidas_frias') },
         { id: 'limonadas', label: 'Limonadas Especiales', items: itemsFilteredBySearch.filter(it => it.category === 'bebidas' && it.subcategory === 'limonadas') }
+      ],
+      postres: [
+        { id: 'postres', label: 'Postres & Dulces de la Casa', items: itemsFilteredBySearch.filter(it => it.category === 'postres') }
       ]
     };
 
@@ -457,6 +537,11 @@ export default function App() {
         return hasB - hasA;
       });
       sections.bebidas = [...sections.bebidas].sort((a, b) => {
+        const hasA = a.items.length > 0 ? 1 : 0;
+        const hasB = b.items.length > 0 ? 1 : 0;
+        return hasB - hasA;
+      });
+      sections.postres = [...sections.postres].sort((a, b) => {
         const hasA = a.items.length > 0 ? 1 : 0;
         const hasB = b.items.length > 0 ? 1 : 0;
         return hasB - hasA;
@@ -488,6 +573,16 @@ export default function App() {
         subtitle: 'Cafetería & Limonadas',
         sections: menuSections.bebidas,
         itemCount: menuSections.bebidas.reduce((acc, sec) => acc + sec.items.length, 0)
+      },
+      {
+        id: 'postres',
+        label: 'POSTRES',
+        icon: '🍰',
+        titleBg: 'bg-amber-50/70',
+        titleTextColor: 'text-[#A0701F]',
+        subtitle: 'Tentaciones Dulces del Día',
+        sections: menuSections.postres,
+        itemCount: menuSections.postres.reduce((acc, sec) => acc + sec.items.length, 0)
       }
     ];
 
@@ -1162,7 +1257,7 @@ export default function App() {
                 whileTap={{ scale: 0.95 }}
                 key={sec.id}
                 onClick={() => handleScrollToSegment(sec.id)}
-                className="px-3.5 py-1.5 bg-[#FAF8F5] hover:bg-rose-50 border border-[#EBE3D5] hover:border-rose-200 text-xs font-semibold rounded-full text-[#5A493B] hover:text-rose-600 transition-all cursor-pointer whitespace-nowrap shrink-0"
+                className="px-3.5 py-1.5 bg-[#FAF8F5] hover:bg-[#FAF1EC] border border-[#EBE3D5] hover:border-[#F2D6C4] text-xs font-semibold rounded-full text-[#5A493B] hover:text-[#C55D21] transition-all duration-500 ease-in-out cursor-pointer whitespace-nowrap shrink-0"
               >
                 {sec.label}
               </motion.button>
@@ -1177,7 +1272,22 @@ export default function App() {
                 whileTap={{ scale: 0.95 }}
                 key={sec.id}
                 onClick={() => handleScrollToSegment(sec.id)}
-                className="px-3.5 py-1.5 bg-[#FAF8F5] hover:bg-rose-50 border border-[#EBE3D5] hover:border-rose-200 text-xs font-semibold rounded-full text-[#5A493B] hover:text-rose-600 transition-all cursor-pointer whitespace-nowrap shrink-0"
+                className="px-3.5 py-1.5 bg-[#FAF8F5] hover:bg-[#FDF2F4] border border-[#EBE3D5] hover:border-[#ECC4CD] text-xs font-semibold rounded-full text-[#5A493B] hover:text-[#D14660] transition-all duration-500 ease-in-out cursor-pointer whitespace-nowrap shrink-0"
+              >
+                {sec.label}
+              </motion.button>
+            ))}
+
+            <div className="flex items-center gap-1.5 shrink-0 pl-3 pr-3 border-l border-[#F4EBE0]/70 text-[10px] font-black uppercase text-[#AF9C89] tracking-wider ml-2">
+              <span className="text-xs">🍰</span> Postres:
+            </div>
+            {menuSections.postres.map((sec) => (
+              <motion.button 
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                key={sec.id}
+                onClick={() => handleScrollToSegment(sec.id)}
+                className="px-3.5 py-1.5 bg-[#FAF8F5] hover:bg-[#FDF9F0] border border-[#EBE3D5] hover:border-[#EED5AA] text-xs font-semibold rounded-full text-[#5A493B] hover:text-[#A0701F] transition-all duration-500 ease-in-out cursor-pointer whitespace-nowrap shrink-0"
               >
                 {sec.label}
               </motion.button>
@@ -1237,17 +1347,21 @@ export default function App() {
                 {section.items.length === 0 ? (
                   <p className="text-xs text-stone-400 italic">No hay productos que coincidan en esta categoría.</p>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                  <motion.div 
+                    variants={entranceContainerVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, margin: "-100px" }}
+                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
+                  >
                     {section.items.map((item) => {
                       const cartItem = cart.find(ci => ci.item.id === item.id);
                       return (
                         <motion.div 
                           layout
-                          key={item.id}
-                          initial={{ opacity: 0, scale: 0.95 }}
-                          animate={{ opacity: 1, scale: 1 }}
+                          variants={entranceItemVariants}
                           exit={{ opacity: 0, scale: 0.95 }}
-                          transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                          key={item.id}
                           className="bg-white rounded-3xl border border-[#F4EBE0]/75 p-5 flex flex-col justify-between hover:shadow-lg hover:border-rose-300/30 transition-all duration-300 relative group min-h-[162px] h-full"
                         >
                           <div className="space-y-2 flex-1 text-left">
@@ -1318,7 +1432,7 @@ export default function App() {
                         </motion.div>
                       );
                     })}
-                  </div>
+                  </motion.div>
                 )}
 
               </div>
