@@ -1047,7 +1047,6 @@ export default function App() {
 
           {/* Resultado en forma de carrusel deslizable con soporte de gestos */}
           <div className="relative">
-            
             <AnimatePresence mode="wait">
               {isAiSpecialsLoading ? (
                 /* Sleek shimmer loader matching the slider size */
@@ -1123,7 +1122,7 @@ export default function App() {
                     </div>
                   )}
 
-                  {/* Slider de Tarjetas split (50/50 en desktop, arriba/abajo en móvil) que responde a gestos */}
+                  {/* Slider de Tarjetas split (Forma vertical en móvil, Split a los lados en desktop; diseñado a una escala moderada y compacta) */}
                   <motion.div 
                     drag="x"
                     dragConstraints={{ left: 0, right: 0 }}
@@ -1139,11 +1138,11 @@ export default function App() {
                       }
                     }}
                     whileTap={{ cursor: 'grabbing' }}
-                    className="bg-white rounded-3xl border border-[#FAEDE0] overflow-hidden shadow-sm hover:shadow-md transition-shadow relative flex flex-col md:flex-row min-h-[460px] md:min-h-[350px] cursor-grab select-none active:cursor-grabbing touch-pan-y z-10"
+                    className="bg-white rounded-3xl border border-[#FAEDE0] overflow-hidden shadow-sm hover:shadow-md transition-shadow relative flex flex-col sm:flex-row min-h-[360px] sm:min-h-[290px] md:min-h-[310px] cursor-grab select-none active:cursor-grabbing touch-pan-y z-10"
                   >
                     
-                    {/* Lado Izquierdo: Fotografía en Alta Resolución */}
-                    <div className="w-full md:w-1/2 aspect-[4/3] md:aspect-auto md:h-auto overflow-hidden bg-stone-100 relative shrink-0">
+                    {/* Sección Fotografía: Banner cinemático comprimido en móvil, split exacto en tablets/desktop */}
+                    <div className="w-full sm:w-[42%] md:w-1/2 aspect-[2.2/1] sm:aspect-auto overflow-hidden bg-stone-100 relative shrink-0">
                       <AnimatePresence mode="wait">
                         <motion.img
                           key={aiSpecialsItems[activeSpecialsSlide].id}
@@ -1154,13 +1153,13 @@ export default function App() {
                           exit={{ opacity: 0, scale: 0.98 }}
                           transition={{ duration: 0.4 }}
                           referrerPolicy="no-referrer"
-                          className="w-full h-full object-cover pointer-events-none"
+                          className="w-full h-full object-cover pointer-events-none absolute inset-0"
                         />
                       </AnimatePresence>
                     </div>
-
-                    {/* Lado Derecho: Detalles del Item, Recomendación unificada y Botón de compra */}
-                    <div className="w-full md:w-1/2 p-6 md:p-8 flex flex-col justify-between text-left space-y-4">
+ 
+                    {/* Sección Detalles: Súper balanceados y legibles */}
+                    <div className="flex-1 p-5 xs:p-6 md:p-8 flex flex-col justify-between text-left space-y-3 sm:space-y-4 min-w-0">
                       
                       <AnimatePresence mode="wait">
                         <motion.div
@@ -1169,51 +1168,51 @@ export default function App() {
                           animate={{ opacity: 1, x: 0 }}
                           exit={{ opacity: 0, x: -8 }}
                           transition={{ duration: 0.25 }}
-                          className="space-y-3"
+                          className="space-y-2 sm:space-y-3"
                         >
                           <div className="flex items-center justify-between">
-                            <span className="block text-[8px] font-mono font-bold uppercase tracking-wider text-[#AF9C89] leading-none">
+                            <span className="block text-[8px] xs:text-[9px] font-mono font-bold uppercase tracking-wider text-[#AF9C89] leading-none">
                               {SUBCATEGORIES_LABELS[aiSpecialsItems[activeSpecialsSlide].subcategory] || "Especial de la Casa"}
                             </span>
                           </div>
                           
-                          <h4 className="font-serif text-lg md:text-xl font-black text-[#2F1F17] leading-tight">
+                          <h4 className="font-serif text-sm xs:text-base sm:text-lg md:text-xl font-black text-[#2F1F17] leading-tight line-clamp-1 xs:line-clamp-2">
                             {aiSpecialsItems[activeSpecialsSlide].name}
                           </h4>
                           
-                          <p className="text-[11px] sm:text-xs text-[#5A493B] font-light leading-relaxed">
+                          <p className="text-[10px] xs:text-[11px] sm:text-xs text-[#5A493B] font-light leading-relaxed line-clamp-2 md:line-clamp-3">
                             {aiSpecialsItems[activeSpecialsSlide].description}
                           </p>
-
-                          {/* Integración del Comentario/Explicación del Chef dentro de la misma tarjeta */}
-                          <div className="bg-[#FAF6EE] border border-[#FAEDE0] p-3 rounded-xl space-y-1 relative overflow-hidden">
-                            <span className="block text-[8px] font-extrabold text-rose-500 uppercase tracking-widest leading-none">
+ 
+                          {/* Explicación del Maridaje o Inspiración */}
+                          <div className="bg-[#FAF6EE] border border-[#FAEDE0] p-2.5 sm:p-3 rounded-xl space-y-0.5 sm:space-y-1 relative overflow-hidden">
+                            <span className="block text-[7px] xs:text-[8px] font-extrabold text-rose-500 uppercase tracking-widest leading-none">
                               ✨ Inspiración: {aiSpecialsTheme}
                             </span>
-                            <p className="text-[10px] sm:text-[11px] text-[#5A493B] italic leading-relaxed font-serif font-medium">
+                            <p className="text-[9px] xs:text-[10px] sm:text-[11px] text-[#5A493B] italic leading-relaxed font-serif font-medium line-clamp-2">
                               &ldquo;{aiSpecialsExplanation}&rdquo;
                             </p>
                           </div>
                         </motion.div>
                       </AnimatePresence>
-
-                      <div className="pt-4 border-t border-stone-100/70 flex items-center justify-between gap-4">
+ 
+                      <div className="pt-2.5 xs:pt-3 border-t border-stone-100/70 flex items-center justify-between gap-3 sm:gap-4 shrink-0">
                         <div className="space-y-0.5">
-                          <span className="block text-[8px] uppercase tracking-wider font-mono text-stone-400 font-bold leading-none">Precio especial</span>
-                          <span className="text-sm md:text-base font-black font-mono text-rose-500 leading-none">
+                          <span className="block text-[7px] xs:text-[8px] uppercase tracking-wider font-mono text-stone-400 font-bold leading-none">Precio especial</span>
+                          <span className="text-xs xs:text-sm sm:text-base md:text-lg font-black font-mono text-rose-500 leading-none">
                             C$ {aiSpecialsItems[activeSpecialsSlide].price}
                           </span>
                         </div>
-
+ 
                         <button
                           onClick={() => addToCart(aiSpecialsItems[activeSpecialsSlide])}
-                          className="px-4 py-2 bg-[#2F1F17] hover:bg-rose-500 text-white font-bold rounded-xl text-[10px] tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0 group shadow-2xs hover:shadow-xs active:scale-[0.98]"
+                          className="px-3 py-1.5 xs:px-4 xs:py-2 bg-[#2F1F17] hover:bg-rose-500 text-white font-bold rounded-xl text-[9px] xs:text-[10px] tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0 group shadow-2xs hover:shadow-xs active:scale-[0.98]"
                         >
-                          <span>[Añadir al pedido]</span>
+                          <span>Añadir al pedido</span>
                           <Plus className="w-3.5 h-3.5" />
                         </button>
                       </div>
-
+ 
                     </div>
                   </motion.div>
 
@@ -1362,71 +1361,84 @@ export default function App() {
                           variants={entranceItemVariants}
                           exit={{ opacity: 0, scale: 0.95 }}
                           key={item.id}
-                          className="bg-white rounded-3xl border border-[#F4EBE0]/75 p-5 flex flex-col justify-between hover:shadow-lg hover:border-rose-300/30 transition-all duration-300 relative group min-h-[162px] h-full"
+                          className="bg-white rounded-3xl border border-[#F4EBE0]/75 overflow-hidden flex flex-col justify-between hover:shadow-lg hover:border-rose-300/30 transition-all duration-300 relative group h-full"
                         >
-                          <div className="space-y-2 flex-1 text-left">
-                            <div className="flex justify-between items-start gap-3">
-                              <h5 className="font-serif text-base font-black text-[#2F1F17] group-hover:text-rose-500 transition-colors leading-tight">
-                                {item.name}
-                              </h5>
-                              <span className="font-serif text-sm font-bold text-[#2F1F17] shrink-0 font-mono tracking-tight bg-[#FAF8F5] px-2.5 py-1 rounded-xl border border-[#F1E9DC]">
-                                C$ {item.price}
-                              </span>
-                            </div>
-                            
-                            <p className="text-xs text-[#5A493B] font-light leading-relaxed line-clamp-2">
-                              {item.description}
-                            </p>
-
-                            {/* Float upward bubble animation */}
-                            <AnimatePresence>
-                              {lastAddedId === item.id && (
-                                <motion.span
-                                  initial={{ opacity: 1, y: 0, scale: 0.7 }}
-                                  animate={{ opacity: 0, y: -65, scale: 1.3, rotate: [0, -12, 12, 0] }}
-                                  exit={{ opacity: 0 }}
-                                  transition={{ duration: 0.75, ease: "easeOut" }}
-                                  className="absolute right-6 bottom-14 bg-rose-500 text-white font-mono text-[9px] font-bold px-2 py-0.5 rounded-full z-10 shadow-md pointer-events-none"
-                                >
-                                  +1 🛍️
-                                </motion.span>
-                              )}
-                            </AnimatePresence>
+                          {/* Cabecera Visual Completa (Estilo Tarjeta de Catálogo Tradicional) */}
+                          <div className="relative h-44 w-full bg-[#FAF8F5] overflow-hidden border-b border-[#F4EBE0]/50">
+                            <img 
+                              src={item.image} 
+                              alt={item.name} 
+                              referrerPolicy="no-referrer"
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/15 to-transparent pointer-events-none" />
                           </div>
 
-                          <div className="pt-3 border-t border-[#FBF8F2] flex items-center justify-end">
-                            {cartItem ? (
-                              <div className="flex items-center gap-2 bg-stone-50 border border-stone-200 rounded-full px-2.5 py-1">
-                                <button 
-                                  onClick={() => {
-                                    if (cartItem.quantity === 1) {
-                                      setItemToDelete(item);
-                                    } else {
-                                      updateQuantity(item.id, -1);
-                                    }
-                                  }}
-                                  className="p-1 hover:bg-stone-200 rounded-full text-stone-600 hover:text-red-600 transition-all cursor-pointer flex items-center justify-center"
-                                  aria-label="Disminuir"
-                                >
-                                  <Minus className="w-3.5 h-3.5 text-stone-600" />
-                                </button>
-                                <span className="font-mono text-xs font-bold text-[#2F1F17] w-6 text-center select-none">{cartItem.quantity}</span>
-                                <button 
-                                  onClick={() => updateQuantity(item.id, 1)}
-                                  className="p-1 hover:bg-stone-200 rounded-full text-stone-600 hover:text-emerald-600 transition-all cursor-pointer flex items-center justify-center"
-                                  aria-label="Aumentar"
-                                >
-                                  <Plus className="w-3.5 h-3.5 text-stone-600" />
-                                </button>
+                          <div className="p-5 flex-1 flex flex-col justify-between text-left space-y-3">
+                            <div className="space-y-2">
+                              <div className="flex justify-between items-start gap-2">
+                                <h5 className="font-serif text-[15px] font-black text-[#2F1F17] group-hover:text-rose-500 transition-colors leading-tight">
+                                  {item.name}
+                                </h5>
+                                <span className="font-serif text-sm font-bold text-[#2F1F17] shrink-0 font-mono tracking-tight bg-[#FAF8F5] px-2 py-0.5 rounded-lg border border-[#F1E9DC]">
+                                  C$ {item.price}
+                                </span>
                               </div>
-                            ) : (
-                              <button 
-                                onClick={() => addToCart(item)}
-                                className="px-4 py-2 bg-[#FEE2E2]/60 hover:bg-[#2F1F17] text-rose-700 hover:text-[#FDFBF7] rounded-full text-xs font-bold tracking-wider transition-all cursor-pointer flex items-center gap-1.5 border border-rose-100"
-                              >
-                                <span>[Agregar +]</span>
-                              </button>
-                            )}
+                              
+                              <p className="text-xs text-[#5A493B] font-light leading-relaxed line-clamp-2">
+                                {item.description}
+                              </p>
+
+                              {/* Float upward bubble animation */}
+                              <AnimatePresence>
+                                {lastAddedId === item.id && (
+                                  <motion.span
+                                    initial={{ opacity: 1, y: 0, scale: 0.7 }}
+                                    animate={{ opacity: 0, y: -65, scale: 1.3, rotate: [0, -12, 12, 0] }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.75, ease: "easeOut" }}
+                                    className="absolute right-6 bottom-14 bg-rose-500 text-white font-mono text-[9px] font-bold px-2 py-0.5 rounded-full z-10 shadow-md pointer-events-none"
+                                  >
+                                    +1 🛍️
+                                  </motion.span>
+                                )}
+                              </AnimatePresence>
+                            </div>
+
+                            <div className="pt-3 border-t border-[#FBF8F2] flex items-center justify-end">
+                              {cartItem ? (
+                                <div className="flex items-center gap-2 bg-stone-50 border border-stone-200 rounded-full px-2.5 py-1">
+                                  <button 
+                                    onClick={() => {
+                                      if (cartItem.quantity === 1) {
+                                        setItemToDelete(item);
+                                      } else {
+                                        updateQuantity(item.id, -1);
+                                      }
+                                    }}
+                                    className="p-1 hover:bg-stone-200 rounded-full text-stone-600 hover:text-red-600 transition-all cursor-pointer flex items-center justify-center"
+                                    aria-label="Disminuir"
+                                  >
+                                    <Minus className="w-3.5 h-3.5 text-stone-600" />
+                                  </button>
+                                  <span className="font-mono text-xs font-bold text-[#2F1F17] w-6 text-center select-none">{cartItem.quantity}</span>
+                                  <button 
+                                    onClick={() => updateQuantity(item.id, 1)}
+                                    className="p-1 hover:bg-stone-200 rounded-full text-stone-600 hover:text-emerald-600 transition-all cursor-pointer flex items-center justify-center"
+                                    aria-label="Aumentar"
+                                  >
+                                    <Plus className="w-3.5 h-3.5 text-stone-600" />
+                                  </button>
+                                </div>
+                              ) : (
+                                <button 
+                                  onClick={() => addToCart(item)}
+                                  className="px-4 py-2 bg-[#FEE2E2]/60 hover:bg-[#2F1F17] text-rose-700 hover:text-[#FDFBF7] rounded-full text-xs font-bold tracking-wider transition-all cursor-pointer flex items-center gap-1.5 border border-rose-100"
+                                >
+                                  <span>[Agregar +]</span>
+                                </button>
+                              )}
+                            </div>
                           </div>
 
                         </motion.div>
