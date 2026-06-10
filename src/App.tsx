@@ -1138,11 +1138,11 @@ export default function App() {
                       }
                     }}
                     whileTap={{ cursor: 'grabbing' }}
-                    className="bg-white rounded-3xl border border-[#FAEDE0] overflow-hidden shadow-sm hover:shadow-md transition-shadow relative flex flex-col sm:flex-row min-h-[360px] sm:min-h-[290px] md:min-h-[310px] cursor-grab select-none active:cursor-grabbing touch-pan-y z-10"
+                    className="bg-white rounded-3xl border border-[#FAEDE0] overflow-hidden shadow-sm hover:shadow-md transition-all relative flex flex-col sm:flex-row h-[480px] xs:h-[440px] sm:h-[350px] md:h-[365px] lg:h-[345px] cursor-grab select-none active:cursor-grabbing touch-pan-y z-10"
                   >
                     
                     {/* Sección Fotografía: Banner cinemático comprimido en móvil, split exacto en tablets/desktop */}
-                    <div className="w-full sm:w-[42%] md:w-1/2 aspect-[2.2/1] sm:aspect-auto overflow-hidden bg-stone-100 relative shrink-0">
+                    <div className="w-full sm:w-[42%] md:w-1/2 h-44 sm:h-full overflow-hidden bg-stone-100 relative shrink-0">
                       <AnimatePresence mode="wait">
                         <motion.img
                           key={aiSpecialsItems[activeSpecialsSlide].id}
@@ -1161,40 +1161,43 @@ export default function App() {
                     {/* Sección Detalles: Súper balanceados y legibles */}
                     <div className="flex-1 p-5 xs:p-6 md:p-8 flex flex-col justify-between text-left space-y-3 sm:space-y-4 min-w-0">
                       
-                      <AnimatePresence mode="wait">
-                        <motion.div
-                          key={aiSpecialsItems[activeSpecialsSlide].id}
-                          initial={{ opacity: 0, x: 8 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          exit={{ opacity: 0, x: -8 }}
-                          transition={{ duration: 0.25 }}
-                          className="space-y-2 sm:space-y-3"
-                        >
-                          <div className="flex items-center justify-between">
-                            <span className="block text-[8px] xs:text-[9px] font-mono font-bold uppercase tracking-wider text-[#AF9C89] leading-none">
-                              {SUBCATEGORIES_LABELS[aiSpecialsItems[activeSpecialsSlide].subcategory] || "Especial de la Casa"}
-                            </span>
-                          </div>
-                          
-                          <h4 className="font-serif text-sm xs:text-base sm:text-lg md:text-xl font-black text-[#2F1F17] leading-tight line-clamp-1 xs:line-clamp-2">
-                            {aiSpecialsItems[activeSpecialsSlide].name}
-                          </h4>
-                          
-                          <p className="text-[10px] xs:text-[11px] sm:text-xs text-[#5A493B] font-light leading-relaxed line-clamp-2 md:line-clamp-3">
-                            {aiSpecialsItems[activeSpecialsSlide].description}
-                          </p>
- 
-                          {/* Explicación del Maridaje o Inspiración */}
-                          <div className="bg-[#FAF6EE] border border-[#FAEDE0] p-2.5 sm:p-3 rounded-xl space-y-0.5 sm:space-y-1 relative overflow-hidden">
-                            <span className="block text-[7px] xs:text-[8px] font-extrabold text-rose-500 uppercase tracking-widest leading-none">
-                              ✨ Inspiración: {aiSpecialsTheme}
-                            </span>
-                            <p className="text-[9px] xs:text-[10px] sm:text-[11px] text-[#5A493B] italic leading-relaxed font-serif font-medium line-clamp-2">
-                              &ldquo;{aiSpecialsExplanation}&rdquo;
+                      {/* Contenedor de contenido de texto con espacio/altura estables para evitar saltos internos */}
+                      <div className="flex-1 flex flex-col justify-start relative min-h-0 overflow-hidden">
+                        <AnimatePresence mode="wait">
+                          <motion.div
+                            key={aiSpecialsItems[activeSpecialsSlide].id}
+                            initial={{ opacity: 0, x: 8 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -8 }}
+                            transition={{ duration: 0.25 }}
+                            className="space-y-2 sm:space-y-3 flex-1 flex flex-col justify-start"
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className="block text-[8px] xs:text-[9px] font-mono font-bold uppercase tracking-wider text-[#AF9C89] leading-none">
+                                {SUBCATEGORIES_LABELS[aiSpecialsItems[activeSpecialsSlide].subcategory] || "Especial de la Casa"}
+                              </span>
+                            </div>
+                            
+                            <h4 className="font-serif text-sm xs:text-base sm:text-lg md:text-xl font-black text-[#2F1F17] leading-tight line-clamp-1 xs:line-clamp-2">
+                              {aiSpecialsItems[activeSpecialsSlide].name}
+                            </h4>
+                            
+                            <p className="text-[10px] xs:text-[11px] sm:text-xs text-[#5A493B] font-light leading-relaxed line-clamp-2 md:line-clamp-3">
+                              {aiSpecialsItems[activeSpecialsSlide].description}
                             </p>
-                          </div>
-                        </motion.div>
-                      </AnimatePresence>
+   
+                            {/* Explicación del Maridaje o Inspiración */}
+                            <div className="bg-[#FAF6EE] border border-[#FAEDE0] p-2.5 sm:p-3 rounded-xl space-y-0.5 sm:space-y-1 relative overflow-hidden">
+                              <span className="block text-[7px] xs:text-[8px] font-extrabold text-rose-500 uppercase tracking-widest leading-none">
+                                ✨ Inspiración: {aiSpecialsTheme}
+                              </span>
+                              <p className="text-[9px] xs:text-[10px] sm:text-[11px] text-[#5A493B] italic leading-relaxed font-serif font-medium line-clamp-2">
+                                &ldquo;{aiSpecialsExplanation}&rdquo;
+                              </p>
+                            </div>
+                          </motion.div>
+                        </AnimatePresence>
+                      </div>
  
                       <div className="pt-2.5 xs:pt-3 border-t border-stone-100/70 flex items-center justify-between gap-3 sm:gap-4 shrink-0">
                         <div className="space-y-0.5">
